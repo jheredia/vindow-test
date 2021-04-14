@@ -1,25 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
+import { Field, Form, Formik } from 'formik';
+import React, { useState } from 'react';
+import { Button, Col, Container, FormGroup, Row } from 'reactstrap';
 import './App.css';
 
+interface Values {
+  query: string
+}
+
 function App() {
+  const [isSubmitting, setSubmitting] = useState(false)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <Container>
+      <Row>
+        <Col>
+          <h1>News Search</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs='12'>
+        <Formik
+          initialValues={{query: ''}}
+          onSubmit={(values: Values, {setSubmitting}) => {
+            setTimeout(() => setSubmitting(false), 400);
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          {({values, isSubmitting}) => (
+            <Form>
+              <Row>
+                <Col xs='10'>
+                  <Field className='form-control' type='text' name='query' placeholder='Query'/>
+                </Col>
+                <Col xs='2'>
+                  <Button type='submit' disabled={isSubmitting || values.query === ''}>Search</Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+        </Formik>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
