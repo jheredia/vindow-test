@@ -1,8 +1,24 @@
 import axios from 'axios';
-import useAxios from 'axios-hooks';
 import { Field, Form, Formik } from 'formik';
-import React, { useState } from 'react';
-import { Button, Card, CardBody, CardDeck, CardImg, CardText, CardTitle, Col, Container, FormGroup, Pagination, PaginationItem, PaginationLink, Row, Spinner } from 'reactstrap';
+import { useState } from 'react';
+import { 
+  Button, 
+  Card, 
+  CardBody, 
+  CardImg, 
+  CardLink, 
+  CardText, 
+  CardTitle, 
+  Col, 
+  Container, 
+  Modal, 
+  ModalBody, 
+  Pagination, 
+  PaginationItem, 
+  PaginationLink, 
+  Row, 
+  Spinner 
+} from 'reactstrap';
 import './App.css';
 
 interface Values {
@@ -48,7 +64,14 @@ function App() {
   }
   const getPaginationItems = () => {
     let rows = [
-      <PaginationItem key={`previous-page-item`}><PaginationLink disabled={page === 1} previous href="" onClick={() => moveToPage(page-1)} /></PaginationItem>,
+      <PaginationItem key={`previous-page-item`}>
+        <PaginationLink 
+          disabled={page === 1} 
+          previous 
+          href="" 
+          onClick={() => moveToPage(page-1)} 
+        />
+      </PaginationItem>,
     ];
     let endPage = page+3 <= totalPages ? page+3 : totalPages;
     let startPage = page-3 >= 0 ? page-3 : page-1;
@@ -60,7 +83,13 @@ function App() {
       </PaginationItem>)
     }
     return [...rows, 
-    <PaginationItem key={`next-page-item`}><PaginationLink disabled={page >= totalPages} next href="" onClick={() => moveToPage(page+1)}/></PaginationItem>];
+    <PaginationItem key={`next-page-item`}>
+      <PaginationLink 
+        disabled={page >= totalPages} 
+        next 
+        href="" 
+        onClick={() => moveToPage(page+1)}/>
+      </PaginationItem>];
   }
 
   const searchNews = async (searchParams: SearchParams) => {
@@ -72,12 +101,27 @@ function App() {
     setTotalPages(result.data.totalCount/pageSize)
   };
 
-  const [page, setPage] = useState(1);
   const [hasSearched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const [news, setNews] = useState<New[]>([]);
   const [query, setQuery] = useState('');
+
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+
+  const [modal, setModal] = useState(false);
+  const [imageModalUrl, setImageModalUrl] = useState('');
+
+
+  const toggle = () => setModal(!modal);
+
+  const toggleImageModal = (url: string) => {
+    console.log(url);
+    setImageModalUrl(url);
+    toggle()
+  };
+
   return (
     <Container>
       <Row id='headline'>
@@ -106,11 +150,16 @@ function App() {
             {({values, isSubmitting}) => (
               <Form>
                 <Row>
-                  <Col xs='10'>
+                  <Col xs='8' sm='10'>
                     <Field className='form-control' type='text' name='query' placeholder='Query'/>
                   </Col>
                   <Col xs='2'>
-                    <Button color='primary' type='submit' disabled={isSubmitting || values.query === ''}>Search</Button>
+                    <Button 
+                      color='primary' 
+                      type='submit' 
+                      disabled={isSubmitting || values.query === ''}>
+                        Search
+                    </Button>
                   </Col>
                 </Row>
               </Form>
@@ -145,7 +194,7 @@ function App() {
             </> 
           }
           {news.map((newInfo) => (
-            <Col xs='4' key={newInfo.id}>
+            <Col xs='12' sm='4' key={newInfo.id}>
               <Card className="my-3">
                 <CardBody>
                   <CardTitle>
@@ -156,27 +205,37 @@ function App() {
                   <CardImg 
                     width={newInfo.image.thumbnailWidth} 
                     src={newInfo.image.thumbnail}
-                    className='px-3 rounded'
+                    className='px-3 rounded news-thumbnail'
+                    onClick={() => toggleImageModal(newInfo.image.url)}
                   />}
                 <CardBody>
-                  <CardText>
+                  <CardText className='news-content'>
                     {newInfo.description}
                   </CardText>
-                  <CardText>
-                    <small className="text-muted text-right">Last updated 3 mins ago</small>
-                  </CardText>
+                </CardBody>
+                <CardBody className='text-right'>
+                  <CardLink href={newInfo.url}>
+                    <small>Read more...</small>
+                  </CardLink>
                 </CardBody>
               </Card>
             </Col>
           ))}
-          {news.length > 0 && 
-            <Col>
-              <Pagination aria-label="Page navigation" listClassName='justify-content-center'>
-                {
-                  getPaginationItems()
-                }
-              </Pagination>
-            </Col>
+          {news.length > 0 &&
+            <>
+              <Col>
+                <Pagination aria-label="Page navigation" listClassName='justify-content-center'>
+                  {
+                    getPaginationItems()
+                  }
+                </Pagination>
+              </Col>
+              <Modal isOpen={modal} toggle={toggle} className='modal-lg'>
+                <ModalBody>
+                  <img src={imageModalUrl} className="img-fluid w-100" alt="News thumbnail modal"/>
+                </ModalBody>
+              </Modal>
+            </>
           }
         </>}
       </Row>
