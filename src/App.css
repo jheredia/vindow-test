@@ -61,3 +61,8 @@
 .news-thumbnail:hover {
   cursor: pointer;
 }
+
+.news-article-title {
+  max-height: 100px;
+  height: 100px;
+}

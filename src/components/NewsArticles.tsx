@@ -37,10 +37,10 @@ export const NewsArticles = ({articles}: NewsArticlesProps) => {
       <Row>
       {
         articles.map((article) => (
-          <Col xs='12' sm='4' key={article.id}>
+          <Col xs='12' sm='6' md='4' key={article.id}>
             <Card className="my-3 news-card">
               <CardBody>
-                <CardTitle>
+                <CardTitle className='news-article-title'>
                   <h5>{article.title}</h5>
                 </CardTitle>
               </CardBody>
