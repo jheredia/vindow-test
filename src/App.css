@@ -45,6 +45,19 @@
   overflow: hidden;
 }
 
+.news-card {
+  max-height: 85%;
+}
+
+.news-thumbnail-container {
+  max-height: 200px;
+  height: 200px;
+}
+
+.news-thumbnail {
+  max-height: 200px;
+}
+
 .news-thumbnail:hover {
   cursor: pointer;
 }
